@@ -20,4 +20,27 @@ sp = spotipy.Spotify(auth_manager = client_credentials_manager)
 play_link = 'https://open.spotify.com/playlist/37i9dQZEVXbLp5XoPON0wI'
 play_uri = play_link.split('/')[-1]
 track_uri = [x['track']['uri'] for x in sp.playlist_tracks(play_uri)['items']]
-print(track_uri)
+
+#for i in sp.playlist_tracks(play_uri)['items']
+#print(len(sp.playlist_tracks(play_uri)['items']))
+#print(len(sp.audio_features(track_uri)))
+
+a = {}
+for i in range(len(sp.playlist_tracks(play_uri)['items'])):
+    lst = {}
+    song_name = sp.playlist_tracks(play_uri)['items'][i]['track']['name']
+    singer_name = sp.playlist_tracks(play_uri)['items'][i]['track']['artists'][0]['name']
+    song_popularity = sp.playlist_tracks(play_uri)['items'][i]['track']['popularity']
+    lst['Singer Name'] = singer_name
+    lst['Popularity'] = song_popularity
+    for attr, val in sp.audio_features(track_uri)[0].items():
+        if attr not in ('id','uri','track_href','analysis_url','time_signature'):
+            lst[attr] = val
+    a[song_name] = lst
+
+#for i in a.values():
+    #print(i)
+#print(sp.playlist_tracks(play_uri)['items'])
+#print(sp.audio_features(track_uri))
+df = pd.DataFrame.from_dict(a)
+print(df.head())
